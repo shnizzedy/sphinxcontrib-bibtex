@@ -27,8 +27,13 @@ class CiteRole(XRefRole):
         # fix the label at doctree-resolved time. This happens in
         # process_citation_references.
         refnodes = [
-            self.backend.citation_reference(_fake_entry(key), document)
-            for key in keys]
+            self.backend.citation_reference(
+                _fake_entry(key),
+                document,
+                use_key_as_label=False
+            )
+            for key in keys
+        ]
         for refnode in refnodes:
             refnode['classes'].append('bibtex')
         for key in keys:
