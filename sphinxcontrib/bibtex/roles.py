@@ -20,20 +20,18 @@ class CiteRole(XRefRole):
         and note that the reference was cited.
         """
         keys = node['reftarget'].split(',')
+        labels = [title.astext() for title in node.children]
         # Note that at this point, usually, env.bibtex_cache.bibfiles
         # is still empty because the bibliography directive may not
         # have been processed yet, so we cannot get the actual entry.
         # Instead, we simply fake an entry with the desired key, and
         # fix the label at doctree-resolved time. This happens in
         # process_citation_references.
-        refnodes = [
-            self.backend.citation_reference(
-                _fake_entry(key),
-                document,
-                use_key_as_label=False
-            )
-            for key in keys
-        ]
+        refnodes = [self.backend.citation_reference(
+            _fake_entry(key, labels[i]),
+            document,
+            use_key_as_label = False
+        ) for i, key in enumerate(keys)]
         for refnode in refnodes:
             refnode['classes'].append('bibtex')
         for key in keys:
@@ -41,7 +39,8 @@ class CiteRole(XRefRole):
         return refnodes, []
 
 
-def _fake_entry(key):
+def _fake_entry(key, label):
     entry = pybtex.database.Entry(type_="")
     entry.key = key
+    entry.label = label
     return entry
