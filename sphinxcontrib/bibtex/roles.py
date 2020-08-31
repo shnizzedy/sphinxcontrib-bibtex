@@ -19,6 +19,7 @@ class CiteRole(XRefRole):
         """Transform reference node into a citation reference,
         and note that the reference was cited.
         """
+        print(node['reftarget'])
         keys = node['reftarget'].split(',')
         labels = [title.astext() for title in node.children]
         # Note that at this point, usually, env.bibtex_cache.bibfiles

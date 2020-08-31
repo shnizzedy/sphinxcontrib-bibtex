@@ -17,6 +17,14 @@ from .directives import BibliographyDirective
 from .transforms import BibliographyTransform
 
 
+BRACKET_TYPE = {
+    'square': ('[', ']'),
+    'round': ('(', ')'),
+    'curly': ('{', '}'),
+    'angle': ('〈', '〉'),
+    'double_angle': ('《', '》')
+}
+
 logger = sphinx.util.logging.getLogger(__name__)
 
 
@@ -58,7 +66,7 @@ def process_citations(app, doctree, docname):
             node[0] = docutils.nodes.label('', label)
 
 
-def process_citation_references(app, doctree, docname):
+def process_citation_references(app, doctree, docname, bracket_type='square'):
     """Replace text of citation reference nodes by actual labels.
 
     :param app: The sphinx application.
@@ -72,10 +80,14 @@ def process_citation_references(app, doctree, docname):
     # into reference nodes, so iterate over reference nodes
     for node in doctree.traverse(docutils.nodes.reference):
         if "bibtex" in node.attributes.get('classes', []):
+            print(node)
             text = node[0].astext()
+            print(text)
             key = text[1:-1]
             label = app.env.bibtex_cache.get_label_from_key(key)
-            node[0] = docutils.nodes.Text('[' + label + ']')
+            node[0] = docutils.nodes.Text(label.join([
+                BRACKET_TYPE[bracket_type][0], BRACKET_TYPE[bracket_type][1]
+            ]))
 
 
 def check_duplicate_labels(app, env):
