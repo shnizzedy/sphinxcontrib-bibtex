@@ -43,4 +43,5 @@ def _fake_entry(key, label):
     entry = pybtex.database.Entry(type_="")
     entry.key = key
     entry.label = label
+    print(f'key: {entry.key}; label: {entry.label}')
     return entry
